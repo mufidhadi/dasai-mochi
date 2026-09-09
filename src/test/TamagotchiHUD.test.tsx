@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { TamagotchiHUD } from '../components/TamagotchiHUD';
-import { TamagotchiStats, ColorTheme } from '../types/tamagotchi';
+import type { TamagotchiStats, ColorTheme } from '../types/tamagotchi';
 
 describe('TamagotchiHUD Component', () => {
   const mockStats: TamagotchiStats = {
@@ -21,6 +21,9 @@ describe('TamagotchiHUD Component', () => {
     onClean: vi.fn(),
     onPet: vi.fn(),
     onThemeChange: vi.fn(),
+    onStartSpeaking: vi.fn(),
+    onTypedText: vi.fn(),
+    onFinishSpeaking: vi.fn(),
   };
 
   it('renders all action buttons and status indicators', () => {
@@ -30,6 +33,7 @@ describe('TamagotchiHUD Component', () => {
     expect(screen.getByText(/play/i)).toBeInTheDocument();
     expect(screen.getByText(/sleep/i)).toBeInTheDocument();
     expect(screen.getByText(/clean/i)).toBeInTheDocument();
+    expect(screen.getByText(/ngobrol/i)).toBeInTheDocument();
   });
 
   it('calls respective callbacks when action buttons are clicked', () => {

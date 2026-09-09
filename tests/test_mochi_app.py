@@ -59,7 +59,7 @@ def test_nginx_and_dockerfile():
     
     df_content = dockerfile.read_text()
     assert "FROM node" in df_content
-    assert "FROM nginx" in df_content
+    assert "FROM python" in df_content
     assert "EXPOSE 80" in df_content
     
     ng_content = nginx_conf.read_text()

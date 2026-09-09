@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { TamagotchiStats, ColorTheme } from '../types/tamagotchi';
 import { Utensils, Gamepad2, Moon, Sparkles, Heart, Eye, EyeOff, Maximize, Minimize, Palette } from 'lucide-react';
+import { VoiceChatButton } from './VoiceChatButton';
 
 interface TamagotchiHUDProps {
   stats: TamagotchiStats;
@@ -12,6 +13,9 @@ interface TamagotchiHUDProps {
   onClean: () => void;
   onPet: () => void;
   onThemeChange: (newTheme: ColorTheme) => void;
+  onStartSpeaking: (prompt: string, reply: string) => void;
+  onTypedText: (text: string) => void;
+  onFinishSpeaking: () => void;
 }
 
 export const TamagotchiHUD: React.FC<TamagotchiHUDProps> = ({
@@ -24,6 +28,9 @@ export const TamagotchiHUD: React.FC<TamagotchiHUDProps> = ({
   onClean,
   onPet,
   onThemeChange,
+  onStartSpeaking,
+  onTypedText,
+  onFinishSpeaking,
 }) => {
   const [isHudVisible, setIsHudVisible] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -45,16 +52,24 @@ export const TamagotchiHUD: React.FC<TamagotchiHUDProps> = ({
   return (
     <div className="pointer-events-none fixed inset-0 flex flex-col justify-between p-4 z-20">
       {/* Top Header / Control Bar */}
-      <div className="flex justify-between items-center w-full">
-        {/* Brand / Status Badge */}
-        <div className="pointer-events-auto flex items-center gap-2 bg-slate-950/70 border border-slate-800/80 backdrop-blur-md px-4 py-2 rounded-full text-xs font-mono text-cyan-400 shadow-lg">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-          <span>ROBOT TAMAGOTCHI v2.0</span>
+      <div className="flex flex-wrap justify-between items-center w-full gap-2">
+        {/* Left: Brand Badge & Voice Chat Button */}
+        <div className="pointer-events-auto flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-slate-950/70 border border-slate-800/80 backdrop-blur-md px-4 py-2.5 rounded-full text-xs font-mono text-cyan-400 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span>MOCHI AI AGENT</span>
+          </div>
+
+          <VoiceChatButton
+            onStartSpeaking={onStartSpeaking}
+            onTypedText={onTypedText}
+            onFinishSpeaking={onFinishSpeaking}
+          />
         </div>
 
-        {/* Quick Utility Toggles */}
+        {/* Right: Quick Utility Toggles */}
         <div className="pointer-events-auto flex items-center gap-2">
-          {/* Theme Selector Dropdown / Pills */}
+          {/* Theme Selector Pills */}
           <div className="flex items-center gap-1 bg-slate-950/70 border border-slate-800/80 backdrop-blur-md p-1.5 rounded-full">
             <Palette className="w-4 h-4 text-slate-400 ml-1" />
             {themes.map((t) => (

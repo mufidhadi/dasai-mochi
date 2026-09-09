@@ -7,7 +7,15 @@ authors = [
     { name = "mufid", email = "mufidhadi@madhani.id" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "fastapi>=0.141.1",
+    "faster-whisper>=1.2.1",
+    "httpx>=0.28.1",
+    "langchain>=1.4.0",
+    "langchain-openai>=1.6.2",
+    "python-multipart>=0.0.32",
+    "uvicorn>=0.52.4",
+]
 
 [project.scripts]
 dasai-mochi = "dasai_mochi:main"
