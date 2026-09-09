@@ -3,9 +3,10 @@ from unittest.mock import MagicMock, patch
 from dasai_mochi.stt import SpeechToTextService
 
 def test_stt_initialization():
-    """Verify SpeechToTextService initializes WhisperModel with tiny/base model"""
+    """Verify SpeechToTextService initializes WhisperModel lazily with tiny/base model"""
     with patch("dasai_mochi.stt.WhisperModel") as mock_whisper:
         stt = SpeechToTextService(model_size="tiny")
+        stt._get_model()
         mock_whisper.assert_called_once_with("tiny", device="cpu", compute_type="int8")
 
 def test_stt_transcribe_audio():

@@ -1,5 +1,6 @@
 import tempfile
 import os
+from typing import Any
 from faster_whisper import WhisperModel
 
 class SpeechToTextService:
@@ -7,16 +8,22 @@ class SpeechToTextService:
         self.model_size = model_size
         self.device = device
         self.compute_type = compute_type
-        self.model = WhisperModel(self.model_size, device=self.device, compute_type=self.compute_type)
+        self.model: Any = None
+
+    def _get_model(self):
+        if self.model is None:
+            self.model = WhisperModel(self.model_size, device=self.device, compute_type=self.compute_type)
+        return self.model
 
     def transcribe(self, audio_bytes: bytes, language: str = "id") -> str:
-        # Write bytes to temporary audio file
+        model = self._get_model()
+        
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
             tmp.write(audio_bytes)
             tmp_path = tmp.name
 
         try:
-            segments, _ = self.model.transcribe(tmp_path, language=language)
+            segments, _ = model.transcribe(tmp_path, language=language)
             text_parts = [segment.text for segment in segments]
             return "".join(text_parts).strip()
         finally:
