@@ -33,9 +33,9 @@ def test_docker_compose_traefik_configuration():
     
     content = compose_file.read_text()
     assert "traefik.enable=true" in content
-    assert "traefik.http.routers.mochi.entrypoints=websecure" in content
+    assert "traefik.http.routers.dasai-mochi.entrypoints=websecure" in content
     assert "Host(`${APP_DOMAIN:-mochi.masmuf.cloud}`)" in content
-    assert "traefik.http.routers.mochi.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}" in content
+    assert "traefik.http.routers.dasai-mochi.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}" in content
     assert "web_proxy" in content
 
 def test_env_files_and_defaults():
