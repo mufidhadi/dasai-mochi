@@ -1,45 +1,28 @@
-# Dasai Mochi — Web Digital Companion & Driving Bot
+# Virtual Robot Tamagotchi — Digital Pet
 
-A high-fidelity digital pet inspired by the legendary **Dasai Mochi Gen-3** OLED dashboard companion. Designed with **Pencil (`.pen`)**, engineered with **React 19**, **Vite**, **TypeScript**, **Tailwind CSS**, and synthesized with the **Web Audio API**.
+A full-screen, body-less virtual robot Tamagotchi pet. Built with **React 19**, **TypeScript**, **HTML5 Canvas**, **Tailwind CSS v4**, and synthesized audio using native **Web Audio API**.
 
 Live URL: [https://mochi.masmuf.cloud](https://mochi.masmuf.cloud)
 
 ---
 
-## Features
+## Concept & Architecture
 
-- **Expressive OLED Face Matrix**:
-  - Over 10 animated emotions: Idle/Blink, Joy (`^_^`), Love Heart Eyes (`<3`), Driving Focus (`>_<`), Cornering Left/Right Inertia Slant, Sudden Brake / Shocked (`!`), Dizzy Spiral (`@_@`), Sleepy, Sleeping (`zzZ`), and Cool 8-bit Sunglasses (`(⌐■_■)`).
-- **CRT & OLED Display Simulation**:
-  - Scanlines overlay, phosphor bloom glow, glass lens refraction reflection.
-- **Interchangeable Helmets & Custom Visors**:
-  - Cyber Visor (Cyberpunk Neon Yellow/Cyan HUD)
-  - Carbon JDM (Track-spec lightweight aero shell)
-  - Neko Ears (Kawaii Edition with glowing cat ears)
-  - 90s Arcade (Synthwave translucent shell)
-  - Samurai Kabuto (Golden Ronin warrior crest)
-  - Bare Stealth Chassis (Original Gen-3 minimal casing)
-- **Dashboard Driving Companion & Inertia Physics**:
-  - Lateral G-Force inertia gauge
-  - Simulated steering wheel & cornering reactions
-  - Gas pedal with engine rev sounds
-  - Sudden brake pedal with screech effects
-- **Sensory & Audio Integration**:
-  - Built-in retro 8-bit sound synthesizer using native **Web Audio API** (zero external assets needed)
-  - Device orientation / Gyroscope reactivity on mobile devices
-  - Capacitive petting interactions with particle effects
-- **Mode Switching**:
-  - Car Dash Mode vs Desk Pet Standby Mode
+- **Minimalist Full-Screen Robot Face**: No body, chassis, helmet, or car dashboard. Only two expressive eyes and one mouth filling 100% of the screen.
+- **Dynamic Pupil Tracking**: Robot pupils track user mouse / touch movement across the viewport.
+- **Multi-Expression Facial Engine**: Supports Neutral, Happy, Hungry, Sleepy, Sleeping (with Zzz floating particles), Love (Heart eyes), Excited (Star eyes), Surprised, and Low Battery (`!`) expressions.
+- **Tamagotchi Needs & Stats**: Hunger, Energy, Happiness, and Battery decay over time.
+- **Interactive Care HUD**: Retractable floating controls to Feed 🍱, Play 🎮, Sleep 💤, Clean 🧼, Pet 💖, and change Neon Color Themes (Cyan, Amber, Green, Magenta, White).
+- **Procedural Synthesizer**: Built-in 8-bit sound effects using Web Audio API.
 
 ---
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Canvas Confetti
-- **Audio**: Web Audio API (realtime procedural sound synthesis)
-- **Design**: Pencil MCP (`.pen` design specification v2.17 in `design/mochi-pet.pen`)
-- **Testing**: Vitest + React Testing Library (20 unit tests) & Pytest with uv (5 specification tests)
-- **Deployment**: Docker multi-stage build, Nginx Alpine, Traefik v2 reverse proxy with Let's Encrypt SSL
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React
+- **Audio**: Web Audio API (procedural synthesis)
+- **Testing**: Vitest + React Testing Library (11 tests) & Pytest with uv (5 tests)
+- **Deployment**: Docker multi-stage build, Nginx Alpine, Traefik reverse proxy
 
 ---
 
@@ -53,7 +36,7 @@ pnpm install
 pnpm dev
 
 # Run Vitest test suite
-pnpm test
+pnpm exec vitest run
 
 # Run Pytest specification tests
 uv run pytest -v
@@ -67,6 +50,5 @@ pnpm build
 ## Docker & Deployment
 
 ```bash
-# Run locally with docker compose
 docker compose up --build -d
 ```

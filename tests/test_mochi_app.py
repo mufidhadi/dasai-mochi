@@ -8,7 +8,7 @@ def test_pencil_design_specification():
     pen_file = BASE_DIR / "design" / "mochi-pet.pen"
     assert pen_file.exists(), "design/mochi-pet.pen must exist"
     
-    with open(pen_file, "r") as f:
+    with open(pen_file, "r", encoding="utf-8") as f:
         data = json.load(f)
         
     assert data.get("version") == "2.17"
