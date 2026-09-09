@@ -27,8 +27,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Copy python project definition and source
-COPY pyproject.toml uv.lock ./
+# Copy python project definition, readme, and source
+COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 COPY nginx.conf /etc/nginx/sites-available/default
 RUN rm -f /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
