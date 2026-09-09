@@ -7,6 +7,11 @@ services:
     restart: unless-stopped
     networks:
       - web_proxy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=web_proxy"
