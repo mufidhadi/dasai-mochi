@@ -60,14 +60,14 @@ Pembuatan Aplikasi Web Digital Pet seperti Dasai Mochi (Gen-3 OLED Companion), D
 ---
 
 ## 3. Nomor Hash Commit & Branch
-- **Nomor Hash Commit**: `04d2cb3`
+- **Nomor Hash Commit Terakhir**: `59fbbc0` (Commit rangkaian: `04d2cb3` -> `51c7342` -> `0da74de` -> `935df0d` -> `59fbbc0`)
 - **Nama Branch**: `feat/mochi-digital-pet`
 - **Base Branch**: `main`
 
 ---
 
 ## 4. Nama dan URL Repo
-- **Nama Repo**: `mufidhadi/dasai-mochi`
+- **Nama Repo**: `mufidhadi/dasai-mochi` (Public Repo)
 - **URL Repo (Web)**: `https://github.com/mufidhadi/dasai-mochi`
 - **URL Remote (SSH)**: `git@github.com:mufidhadi/dasai-mochi.git`
 - **Akses Live**: `https://mochi.masmuf.cloud`
@@ -99,6 +99,12 @@ Pembuatan Aplikasi Web Digital Pet seperti Dasai Mochi (Gen-3 OLED Companion), D
 4. **Multiple DOM Element Query di App Test**:
    - *Tantangan*: Teks `DASAI MOCHI` terdapat di heading header dan teks footer, sehingga `screen.getByText` menghasilkan konflik multiple matches.
    - *Solusi*: Menggunakan query semantik `screen.getByRole('heading', { name: /DASAI MOCHI/i })`.
+5. **Traefik Dual-Network Routing**:
+   - *Tantangan*: Container Traefik di VPS terhubung ke dua bridge network (`web` dan `web_proxy`), menyebabkan Traefik menolak meneruskan trafik jika tidak diberi tahu network mana yang harus dipakai (`traefik cannot determine which network to use`).
+   - *Solusi*: Menambahkan label `traefik.docker.network=web_proxy` pada service `dasai-mochi` di `docker-compose.yml`.
+6. **Alpine Musl IPv6 Resolution pada Docker Healthcheck**:
+   - *Tantangan*: Di Alpine Linux dengan musl libc, `wget -q --spider http://localhost/` otomatis me-resolve `localhost` ke IPv6 `[::1]:80`, sementara Nginx default hanya listening di IPv4 `0.0.0.0:80`. Akibatnya healthcheck gagal (exit 1), container berstatus `unhealthy`, dan Traefik otomatis mendrop routing ke container tersebut.
+   - *Solusi*: Menambahkan direktif `listen [::]:80;` pada blok server di `nginx.conf` serta menargetkan healthcheck secara eksplisit ke IPv4 loopback `http://127.0.0.1/`. Container langsung berubah status menjadi `healthy` dan Traefik segera melayani routing.
 
 ---
 
@@ -139,10 +145,16 @@ Pembuatan Aplikasi Web Digital Pet seperti Dasai Mochi (Gen-3 OLED Companion), D
 - `test_frontend_production_build_artifacts` -> PASSED
 - **Hasil Total Pytest**: **5 passed (100%)**
 
-### C. Container & Server Integration Test
+### C. Container & Server Live Integration Test
 - Local Docker run check (`curl -I http://localhost:8089`): `HTTP/1.1 200 OK`
-- VPS Docker Container check (`docker compose ps`): `Up (healthy)`
-- Traefik routing verification (`curl -k -I https://mochi.masmuf.cloud`): `HTTP/2 200`
+- VPS Docker Container check (`docker compose ps`): `Up About a minute (healthy)`
+- Traefik routing & Let's Encrypt TLS verification (`curl -iv https://mochi.masmuf.cloud`):
+  - TLS Handshake: `TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256`
+  - Certificate Issuer: `C=US, O=Let's Encrypt, CN=YR1`
+  - Subject: `CN=mochi.masmuf.cloud`
+  - Status: `SSL certificate verify ok`
+  - Response: `HTTP/2 200`
+  - Static bundles: `application/javascript` (241 KB) & `text/css` (53 KB) `HTTP/2 200`
 
 ---
 
@@ -150,3 +162,4 @@ Pembuatan Aplikasi Web Digital Pet seperti Dasai Mochi (Gen-3 OLED Companion), D
 1. **Penerapan TDD Mengurangi Risiko Regresi**: Penulisan test mendahului implementasi logika audio synthesizer dan hook inersia fisika memastikan perilaku komponen terprediksi tanpa error runtime tak terduga.
 2. **Procedural Web Audio API vs Static Assets**: Memanfaatkan osilator Web Audio API untuk suara 8-bit retro menghasilkan latensi audio mendekati nol tanpa risiko missing asset file atau CORS restriction pada media audio.
 3. **Kepatuhan Terhadap SOP Multi-Environment**: Selalu mengunci versi toolchain (pnpm, node, nginx) antara lingkungan lokal dan kontainer docker produksi untuk menghindari kegagalan dependensi di server.
+4. **Detail Jaringan Docker & Musl Libc**: Karakteristik resolusi IPv6 pada Alpine Linux dan penentuan label network Traefik pada container multi-network harus selalu diperhitungkan saat konfigurasi reverse proxy.
