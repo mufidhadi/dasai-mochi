@@ -1,32 +1,72 @@
-# React + TypeScript + Vite
+# Dasai Mochi — Web Digital Companion & Driving Bot
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A high-fidelity digital pet inspired by the legendary **Dasai Mochi Gen-3** OLED dashboard companion. Designed with **Pencil (`.pen`)**, engineered with **React 19**, **Vite**, **TypeScript**, **Tailwind CSS**, and synthesized with the **Web Audio API**.
 
-Currently, two official plugins are available:
+Live URL: [https://mochi.masmuf.cloud](https://mochi.masmuf.cloud)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Expressive OLED Face Matrix**:
+  - Over 10 animated emotions: Idle/Blink, Joy (`^_^`), Love Heart Eyes (`<3`), Driving Focus (`>_<`), Cornering Left/Right Inertia Slant, Sudden Brake / Shocked (`!`), Dizzy Spiral (`@_@`), Sleepy, Sleeping (`zzZ`), and Cool 8-bit Sunglasses (`(⌐■_■)`).
+- **CRT & OLED Display Simulation**:
+  - Scanlines overlay, phosphor bloom glow, glass lens refraction reflection.
+- **Interchangeable Helmets & Custom Visors**:
+  - Cyber Visor (Cyberpunk Neon Yellow/Cyan HUD)
+  - Carbon JDM (Track-spec lightweight aero shell)
+  - Neko Ears (Kawaii Edition with glowing cat ears)
+  - 90s Arcade (Synthwave translucent shell)
+  - Samurai Kabuto (Golden Ronin warrior crest)
+  - Bare Stealth Chassis (Original Gen-3 minimal casing)
+- **Dashboard Driving Companion & Inertia Physics**:
+  - Lateral G-Force inertia gauge
+  - Simulated steering wheel & cornering reactions
+  - Gas pedal with engine rev sounds
+  - Sudden brake pedal with screech effects
+- **Sensory & Audio Integration**:
+  - Built-in retro 8-bit sound synthesizer using native **Web Audio API** (zero external assets needed)
+  - Device orientation / Gyroscope reactivity on mobile devices
+  - Capacitive petting interactions with particle effects
+- **Mode Switching**:
+  - Car Dash Mode vs Desk Pet Standby Mode
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Tech Stack
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Canvas Confetti
+- **Audio**: Web Audio API (realtime procedural sound synthesis)
+- **Design**: Pencil MCP (`.pen` design specification v2.17 in `design/mochi-pet.pen`)
+- **Testing**: Vitest + React Testing Library (20 unit tests) & Pytest with uv (5 specification tests)
+- **Deployment**: Docker multi-stage build, Nginx Alpine, Traefik v2 reverse proxy with Let's Encrypt SSL
+
+---
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run dev server
+pnpm dev
+
+# Run Vitest test suite
+pnpm test
+
+# Run Pytest specification tests
+uv run pytest -v
+
+# Build for production
+pnpm build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## Docker & Deployment
+
+```bash
+# Run locally with docker compose
+docker compose up --build -d
+```

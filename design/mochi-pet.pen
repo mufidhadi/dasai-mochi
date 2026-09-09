@@ -1,0 +1,666 @@
+{
+  "version": "2.17",
+  "fileToken": "mochi-pet-pen-design-v1",
+  "themes": {
+    "mode": [
+      "dark",
+      "light"
+    ]
+  },
+  "variables": {
+    "bg-base": {
+      "type": "color",
+      "value": [
+        { "value": "#090A0F", "theme": { "mode": "dark" } },
+        { "value": "#F0F2F5", "theme": { "mode": "light" } }
+      ]
+    },
+    "bg-card": {
+      "type": "color",
+      "value": [
+        { "value": "#12151F", "theme": { "mode": "dark" } },
+        { "value": "#FFFFFF", "theme": { "mode": "light" } }
+      ]
+    },
+    "bg-screen": {
+      "type": "color",
+      "value": [
+        { "value": "#050508", "theme": { "mode": "dark" } },
+        { "value": "#050508", "theme": { "mode": "light" } }
+      ]
+    },
+    "oled-cyan": {
+      "type": "color",
+      "value": [
+        { "value": "#00F0FF", "theme": { "mode": "dark" } },
+        { "value": "#00C2CF", "theme": { "mode": "light" } }
+      ]
+    },
+    "oled-amber": {
+      "type": "color",
+      "value": [
+        { "value": "#FFB800", "theme": { "mode": "dark" } },
+        { "value": "#D99B00", "theme": { "mode": "light" } }
+      ]
+    },
+    "oled-pink": {
+      "type": "color",
+      "value": [
+        { "value": "#FF2A85", "theme": { "mode": "dark" } },
+        { "value": "#E01870", "theme": { "mode": "light" } }
+      ]
+    },
+    "text-main": {
+      "type": "color",
+      "value": [
+        { "value": "#FFFFFF", "theme": { "mode": "dark" } },
+        { "value": "#111827", "theme": { "mode": "light" } }
+      ]
+    },
+    "text-muted": {
+      "type": "color",
+      "value": [
+        { "value": "#94A3B8", "theme": { "mode": "dark" } },
+        { "value": "#64748B", "theme": { "mode": "light" } }
+      ]
+    },
+    "border-subtle": {
+      "type": "color",
+      "value": [
+        { "value": "#1E293B", "theme": { "mode": "dark" } },
+        { "value": "#E2E8F0", "theme": { "mode": "light" } }
+      ]
+    },
+    "font-family": {
+      "type": "string",
+      "value": "Inter"
+    }
+  },
+  "children": [
+    {
+      "type": "frame",
+      "id": "screen_main_companion",
+      "name": "Screen 1 — Dasai Mochi Main Companion",
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg-base",
+      "layout": "vertical",
+      "padding": [32, 48],
+      "gap": 24,
+      "children": [
+        {
+          "type": "frame",
+          "id": "header_bar",
+          "name": "Navigation & Status Header",
+          "width": "fill_container",
+          "height": 60,
+          "layout": "horizontal",
+          "alignItems": "center",
+          "justifyContent": "space-between",
+          "fill": "$bg-card",
+          "cornerRadius": 16,
+          "padding": [12, 24],
+          "stroke": "$border-subtle",
+          "strokeWidth": 1,
+          "children": [
+            {
+              "type": "frame",
+              "id": "brand_group",
+              "name": "Brand Info",
+              "layout": "horizontal",
+              "alignItems": "center",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "brand_badge",
+                  "name": "Mochi Logo Icon",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "$oled-cyan",
+                  "cornerRadius": 10,
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "badge_txt",
+                      "name": "Icon Char",
+                      "content": "🍡",
+                      "fontSize": 18,
+                      "fill": "#000000"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "app_title",
+                  "name": "App Name",
+                  "content": "DASAI MOCHI // OS v3.2",
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "fontFamily": "$font-family",
+                  "fill": "$text-main"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "telemetry_pill_group",
+              "name": "Telemetry Badges",
+              "layout": "horizontal",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "badge_gyro",
+                  "name": "Gyro Indicator",
+                  "padding": [6, 14],
+                  "cornerRadius": 20,
+                  "fill": "#0F2936",
+                  "stroke": "$oled-cyan",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "txt_gyro",
+                      "name": "Gyro Label",
+                      "content": "● GYRO REACTIVE",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "fill": "$oled-cyan"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "badge_sound",
+                  "name": "Sound Indicator",
+                  "padding": [6, 14],
+                  "cornerRadius": 20,
+                  "fill": "#2D1D05",
+                  "stroke": "$oled-amber",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "txt_sound",
+                      "name": "Sound Label",
+                      "content": "♫ CHIMES ON",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "fill": "$oled-amber"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "badge_battery",
+                  "name": "Battery Indicator",
+                  "padding": [6, 14],
+                  "cornerRadius": 20,
+                  "fill": "#1E293B",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "txt_battery",
+                      "name": "Battery Label",
+                      "content": "⚡ 92% DOCK",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "fill": "$text-main"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "main_content_split",
+          "name": "Main Split: Pet Companion View & Live Dashboard HUD",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "horizontal",
+          "gap": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "robot_chassis_view",
+              "name": "Mochi Device Physical Unit",
+              "width": 720,
+              "height": "fill_container",
+              "layout": "vertical",
+              "alignItems": "center",
+              "justifyContent": "center",
+              "fill": "$bg-card",
+              "cornerRadius": 24,
+              "stroke": "$border-subtle",
+              "strokeWidth": 1,
+              "padding": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mochi_outer_shell",
+                  "name": "Mochi Helmet / Outer Housing",
+                  "width": 380,
+                  "height": 380,
+                  "cornerRadius": 80,
+                  "fill": "#1E202B",
+                  "stroke": "$oled-cyan",
+                  "strokeWidth": 3,
+                  "layout": "vertical",
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "padding": 28,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "oled_screen_bezel",
+                      "name": "OLED Display Window",
+                      "width": 320,
+                      "height": 260,
+                      "cornerRadius": 36,
+                      "fill": "$bg-screen",
+                      "stroke": "#2E384D",
+                      "strokeWidth": 2,
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "justifyContent": "center",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "eyes_row",
+                          "name": "Animated OLED Eyes Container",
+                          "width": "fill_container",
+                          "height": 80,
+                          "layout": "horizontal",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "gap": 48,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "eye_left",
+                              "name": "Left Eye Pupil",
+                              "width": 46,
+                              "height": 56,
+                              "cornerRadius": 20,
+                              "fill": "$oled-cyan"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "eye_right",
+                              "name": "Right Eye Pupil",
+                              "width": 46,
+                              "height": 56,
+                              "cornerRadius": 20,
+                              "fill": "$oled-cyan"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "blush_cheeks_row",
+                          "name": "Blush Cheeks Container",
+                          "width": 180,
+                          "layout": "horizontal",
+                          "justifyContent": "space-between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "cheek_left",
+                              "name": "Cheek Glow L",
+                              "width": 24,
+                              "height": 10,
+                              "cornerRadius": 5,
+                              "fill": "$oled-pink"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "mouth_shape",
+                              "name": "Happy Mouth",
+                              "width": 28,
+                              "height": 14,
+                              "cornerRadius": 7,
+                              "fill": "$oled-cyan"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "cheek_right",
+                              "name": "Cheek Glow R",
+                              "width": 24,
+                              "height": 10,
+                              "cornerRadius": 5,
+                              "fill": "$oled-pink"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "dasai_chassis_branding",
+                      "name": "Chassis Etching",
+                      "content": "DASAI MOCHI // GEN-3",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "fill": "$text-muted",
+                      "fontFamily": "$font-family"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pet_pedestal_stand",
+                  "name": "Magnetic Swivel Stand",
+                  "width": 160,
+                  "height": 28,
+                  "cornerRadius": 14,
+                  "fill": "#151821",
+                  "stroke": "$border-subtle",
+                  "strokeWidth": 1
+                },
+                {
+                  "type": "text",
+                  "id": "interaction_hint",
+                  "name": "Touch Hint Text",
+                  "content": "✨ Click / Tap Mochi to Pet • Tilt / Move cursor to simulate Inertia G-Force",
+                  "fontSize": 12,
+                  "fill": "$text-muted",
+                  "fontFamily": "$font-family"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hud_controls_panel",
+              "name": "Control HUD & Customization Hub",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 18,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "card_mood_matrix",
+                  "name": "Quick Emotion Switcher Card",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "fill": "$bg-card",
+                  "cornerRadius": 20,
+                  "padding": 20,
+                  "gap": 14,
+                  "stroke": "$border-subtle",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mood_title",
+                      "name": "Card Title",
+                      "content": "FACIAL EXPRESSIONS & EMOTIONS",
+                      "fontSize": 13,
+                      "fontWeight": "bold",
+                      "fill": "$oled-cyan",
+                      "fontFamily": "$font-family"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mood_buttons_row",
+                      "name": "Emotion Triggers Row",
+                      "width": "fill_container",
+                      "layout": "horizontal",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "btn_happy",
+                          "name": "Happy Btn",
+                          "padding": [10, 16],
+                          "cornerRadius": 12,
+                          "fill": "#0F2936",
+                          "stroke": "$oled-cyan",
+                          "strokeWidth": 1,
+                          "children": [
+                            { "type": "text", "id": "t_happy", "content": "Happy (^_^)", "fontSize": 12, "fill": "$oled-cyan" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_speed",
+                          "name": "Driving Focus Btn",
+                          "padding": [10, 16],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_speed", "content": "Speed (>_<)", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_dizzy",
+                          "name": "Dizzy Btn",
+                          "padding": [10, 16],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_dizzy", "content": "Dizzy (@_@)", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_sleep",
+                          "name": "Sleepy Btn",
+                          "padding": [10, 16],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_sleep", "content": "Sleep (u_u)zz", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_cool",
+                          "name": "Cool Shades Btn",
+                          "padding": [10, 16],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_cool", "content": "Cool B-)", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "card_helmet_selector",
+                  "name": "Helmet Customizer Card",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "fill": "$bg-card",
+                  "cornerRadius": 20,
+                  "padding": 20,
+                  "gap": 14,
+                  "stroke": "$border-subtle",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "helmet_title",
+                      "name": "Helmet Heading",
+                      "content": "INTERCHANGEABLE HELMETS & VISORS",
+                      "fontSize": 13,
+                      "fontWeight": "bold",
+                      "fill": "$oled-pink",
+                      "fontFamily": "$font-family"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "helmets_grid",
+                      "name": "Helmet Choices",
+                      "width": "fill_container",
+                      "layout": "horizontal",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "h_cyber",
+                          "name": "Cyber Helmet",
+                          "padding": [12, 14],
+                          "cornerRadius": 12,
+                          "fill": "#2D0A1E",
+                          "stroke": "$oled-pink",
+                          "strokeWidth": 1,
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            { "type": "text", "id": "th_cyber", "content": "Cyber Visor", "fontSize": 12, "fontWeight": "bold", "fill": "$oled-pink" },
+                            { "type": "text", "id": "th_cyber_sub", "content": "Neon Glow", "fontSize": 10, "fill": "$text-muted" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "h_carbon",
+                          "name": "Carbon Helmet",
+                          "padding": [12, 14],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            { "type": "text", "id": "th_carb", "content": "Carbon JDM", "fontSize": 12, "fontWeight": "bold", "fill": "$text-main" },
+                            { "type": "text", "id": "th_carb_sub", "content": "Track Spec", "fontSize": 10, "fill": "$text-muted" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "h_neko",
+                          "name": "Neko Ears Helmet",
+                          "padding": [12, 14],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            { "type": "text", "id": "th_neko", "content": "Neko Ears", "fontSize": 12, "fontWeight": "bold", "fill": "$text-main" },
+                            { "type": "text", "id": "th_neko_sub", "content": "Kawaii Edition", "fontSize": 10, "fill": "$text-muted" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "h_retro",
+                          "name": "Retro 90s Helmet",
+                          "padding": [12, 14],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            { "type": "text", "id": "th_retro", "content": "Arcade 90s", "fontSize": 12, "fontWeight": "bold", "fill": "$text-main" },
+                            { "type": "text", "id": "th_retro_sub", "content": "Retro Gold", "fontSize": 10, "fill": "$text-muted" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "card_driving_physics",
+                  "name": "Dashboard Driving Simulator Mode",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "fill": "$bg-card",
+                  "cornerRadius": 20,
+                  "padding": 20,
+                  "gap": 14,
+                  "stroke": "$border-subtle",
+                  "strokeWidth": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "drive_title",
+                      "name": "Driving Heading",
+                      "content": "DRIVING COMPANION & G-FORCE SIMULATOR",
+                      "fontSize": 13,
+                      "fontWeight": "bold",
+                      "fill": "$oled-amber",
+                      "fontFamily": "$font-family"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "drive_controls_row",
+                      "name": "Controls Row",
+                      "width": "fill_container",
+                      "layout": "horizontal",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "btn_turn_left",
+                          "name": "Steer Left",
+                          "padding": [10, 20],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_tl", "content": "↶ Turn Left", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_accel",
+                          "name": "Accelerate",
+                          "padding": [10, 24],
+                          "cornerRadius": 12,
+                          "fill": "#2D1D05",
+                          "stroke": "$oled-amber",
+                          "strokeWidth": 1,
+                          "children": [
+                            { "type": "text", "id": "t_gas", "content": "⚡ Gas / Accelerate", "fontSize": 12, "fontWeight": "bold", "fill": "$oled-amber" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_brake",
+                          "name": "Brake Hard",
+                          "padding": [10, 20],
+                          "cornerRadius": 12,
+                          "fill": "#2D0A1E",
+                          "stroke": "$oled-pink",
+                          "strokeWidth": 1,
+                          "children": [
+                            { "type": "text", "id": "t_brk", "content": "🛑 Sudden Brake", "fontSize": 12, "fill": "$oled-pink" }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "btn_turn_right",
+                          "name": "Steer Right",
+                          "padding": [10, 20],
+                          "cornerRadius": 12,
+                          "fill": "#1E202B",
+                          "children": [
+                            { "type": "text", "id": "t_tr", "content": "Turn Right ↷", "fontSize": 12, "fill": "$text-main" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

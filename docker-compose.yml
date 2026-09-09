@@ -1,0 +1,19 @@
+services:
+  mochi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ${CONTAINER_NAME:-dasai-mochi}
+    restart: unless-stopped
+    networks:
+      - web_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mochi.entrypoints=websecure"
+      - "traefik.http.routers.mochi.rule=Host(`${APP_DOMAIN:-mochi.masmuf.cloud}`)"
+      - "traefik.http.routers.mochi.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
+      - "traefik.http.services.mochi.loadbalancer.server.port=80"
+
+networks:
+  web_proxy:
+    external: true
