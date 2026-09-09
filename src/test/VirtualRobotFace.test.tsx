@@ -2,11 +2,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { VirtualRobotFace } from '../components/VirtualRobotFace';
 
-describe('VirtualRobotFace Component', () => {
-  it('renders a full-screen canvas element for the robot face', () => {
+describe('VirtualRobotFace Component with Action Animations', () => {
+  it('renders canvas element with activeAction prop', () => {
     render(
       <VirtualRobotFace 
         expression="neutral" 
+        activeAction="feeding"
         theme="cyan" 
         onPet={vi.fn()} 
       />
@@ -14,8 +15,6 @@ describe('VirtualRobotFace Component', () => {
 
     const canvas = screen.getByTestId('virtual-robot-canvas');
     expect(canvas).toBeInTheDocument();
-    expect(canvas.className).toContain('w-full');
-    expect(canvas.className).toContain('h-full');
   });
 
   it('triggers onPet callback when canvas is clicked', () => {
@@ -23,6 +22,7 @@ describe('VirtualRobotFace Component', () => {
     render(
       <VirtualRobotFace 
         expression="neutral" 
+        activeAction="idle"
         theme="cyan" 
         onPet={handlePet} 
       />

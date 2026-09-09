@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { TamagotchiStats, TamagotchiExpression, ColorTheme } from '../types/tamagotchi';
+import type { TamagotchiStats, TamagotchiExpression, TamagotchiActionState, ColorTheme } from '../types/tamagotchi';
 import { robotAudio } from '../utils/robotAudio';
 
 const INITIAL_STATS: TamagotchiStats = {
@@ -12,6 +12,7 @@ const INITIAL_STATS: TamagotchiStats = {
 export function useTamagotchi() {
   const [stats, setStats] = useState<TamagotchiStats>(INITIAL_STATS);
   const [isSleeping, setIsSleeping] = useState(false);
+  const [activeAction, setActiveAction] = useState<TamagotchiActionState>('idle');
   const [activeExpressionOverride, setActiveExpressionOverride] = useState<TamagotchiExpression | null>(null);
   const [theme, setTheme] = useState<ColorTheme>('cyan');
 
@@ -40,10 +41,13 @@ export function useTamagotchi() {
     return () => clearInterval(timer);
   }, [isSleeping]);
 
-  // Temporary expression override helper
-  const triggerExpression = useCallback((expr: TamagotchiExpression, duration = 3000) => {
+  // Temporary action and expression trigger helper
+  const triggerAction = useCallback((action: TamagotchiActionState, expr: TamagotchiExpression, duration = 3500) => {
+    setActiveAction(action);
     setActiveExpressionOverride(expr);
+
     setTimeout(() => {
+      setActiveAction('idle');
       setActiveExpressionOverride(null);
     }, duration);
   }, []);
@@ -56,8 +60,8 @@ export function useTamagotchi() {
       energy: Math.min(100, prev.energy + 10),
     }));
     robotAudio.playEatSound();
-    triggerExpression('happy', 2500);
-  }, [triggerExpression]);
+    triggerAction('feeding', 'happy', 3500);
+  }, [triggerAction]);
 
   const play = useCallback(() => {
     if (isSleeping) return;
@@ -67,15 +71,17 @@ export function useTamagotchi() {
       energy: Math.max(0, prev.energy - 10),
     }));
     robotAudio.playHappySound();
-    triggerExpression('excited', 2500);
-  }, [isSleeping, triggerExpression]);
+    triggerAction('playing', 'excited', 4000);
+  }, [isSleeping, triggerAction]);
 
   const toggleSleep = useCallback(() => {
     setIsSleeping((prev) => {
       const nextState = !prev;
       if (nextState) {
+        setActiveAction('sleeping');
         robotAudio.playSleepSound();
       } else {
+        setActiveAction('idle');
         robotAudio.playBleep(800, 0.1);
       }
       return nextState;
@@ -89,8 +95,8 @@ export function useTamagotchi() {
       happiness: Math.min(100, prev.happiness + 15),
     }));
     robotAudio.playBleep(1000, 0.15, 'sine');
-    triggerExpression('happy', 2000);
-  }, [triggerExpression]);
+    triggerAction('cleaning', 'happy', 3500);
+  }, [triggerAction]);
 
   const pet = useCallback(() => {
     setStats((prev) => ({
@@ -98,8 +104,8 @@ export function useTamagotchi() {
       happiness: Math.min(100, prev.happiness + 10),
     }));
     robotAudio.playPetPurr();
-    triggerExpression('love', 2000);
-  }, [triggerExpression]);
+    triggerAction('petting', 'love', 2500);
+  }, [triggerAction]);
 
   // Derived Expression
   let expression: TamagotchiExpression = 'neutral';
@@ -118,6 +124,7 @@ export function useTamagotchi() {
   return {
     stats,
     expression,
+    activeAction,
     isSleeping,
     theme,
     setTheme,
@@ -126,6 +133,6 @@ export function useTamagotchi() {
     toggleSleep,
     clean,
     pet,
-    triggerExpression,
+    triggerAction,
   };
 }

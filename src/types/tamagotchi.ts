@@ -9,6 +9,14 @@ export type TamagotchiExpression =
   | 'surprised'
   | 'low_battery';
 
+export type TamagotchiActionState = 
+  | 'idle'
+  | 'feeding'
+  | 'playing'
+  | 'cleaning'
+  | 'petting'
+  | 'sleeping';
+
 export type ColorTheme = 'cyan' | 'amber' | 'green' | 'magenta' | 'white';
 
 export interface TamagotchiStats {

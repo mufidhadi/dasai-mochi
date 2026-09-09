@@ -6,6 +6,7 @@ export function App() {
   const {
     stats,
     expression,
+    activeAction,
     isSleeping,
     theme,
     setTheme,
@@ -18,9 +19,10 @@ export function App() {
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black select-none font-sans">
-      {/* 1. Full-screen Virtual Robot Face Canvas (Only Eyes & Mouth) */}
+      {/* 1. Full-screen Virtual Robot Face Canvas (Eyes, Mouth, and Action Animations) */}
       <VirtualRobotFace
         expression={expression}
+        activeAction={activeAction}
         theme={theme}
         onPet={pet}
       />

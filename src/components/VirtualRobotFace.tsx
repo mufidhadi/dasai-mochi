@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import type { TamagotchiExpression, ColorTheme, Vector2D } from '../types/tamagotchi';
+import type { TamagotchiExpression, TamagotchiActionState, ColorTheme, Vector2D } from '../types/tamagotchi';
 
 interface VirtualRobotFaceProps {
   expression: TamagotchiExpression;
+  activeAction: TamagotchiActionState;
   theme: ColorTheme;
   onPet: () => void;
 }
@@ -15,10 +16,36 @@ const THEME_COLORS: Record<ColorTheme, { main: string; glow: string; bg: string 
   white: { main: '#e2f1f8', glow: 'rgba(226, 241, 248, 0.6)', bg: '#080a0c' },
 };
 
-export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, theme, onPet }) => {
+interface BallObject {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;
+}
+
+interface BubbleObject {
+  x: number;
+  y: number;
+  radius: number;
+  speed: number;
+  wobble: number;
+}
+
+export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({
+  expression,
+  activeAction,
+  theme,
+  onPet,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mousePosRef = useRef<Vector2D>({ x: 0, y: 0 });
   const blinkStateRef = useRef({ isBlinking: false });
+
+  // Animation State Refs for Physics & Props
+  const foodProgressRef = useRef(0);
+  const ballRef = useRef<BallObject | null>(null);
+  const bubblesRef = useRef<BubbleObject[]>([]);
 
   // Mouse / Touch position tracker
   useEffect(() => {
@@ -61,6 +88,27 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
 
     let frameCount = 0;
 
+    // Reset action state parameters on action change
+    if (activeAction === 'feeding') {
+      foodProgressRef.current = 0;
+    } else if (activeAction === 'playing') {
+      ballRef.current = {
+        x: canvas.width * 0.2,
+        y: canvas.height * 0.3,
+        vx: 8,
+        vy: 6,
+        radius: 24,
+      };
+    } else if (activeAction === 'cleaning') {
+      bubblesRef.current = Array.from({ length: 25 }, () => ({
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 200,
+        radius: 12 + Math.random() * 28,
+        speed: 1.5 + Math.random() * 2.5,
+        wobble: Math.random() * Math.PI * 2,
+      }));
+    }
+
     const render = () => {
       frameCount++;
       const width = canvas.width;
@@ -71,7 +119,7 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       ctx.fillStyle = colors.bg;
       ctx.fillRect(0, 0, width, height);
 
-      // Add subtle CRT scanlines
+      // CRT Scanlines
       ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
       for (let y = 0; y < height; y += 4) {
         ctx.fillRect(0, y, width, 1);
@@ -85,13 +133,19 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       const leftEyePos = { x: centerX - eyeDistance, y: centerY };
       const rightEyePos = { x: centerX + eyeDistance, y: centerY };
       const eyeRadius = Math.min(width * 0.08, 65);
+      const mouthY = centerY + eyeRadius + 50;
 
-      // Pupil offset target calculation (look towards cursor)
-      const mouseX = mousePosRef.current.x || centerX;
-      const mouseY = mousePosRef.current.y || centerY;
+      // Pupil offset target calculation (look towards cursor OR bouncing ball)
+      let targetX = mousePosRef.current.x || centerX;
+      let targetY = mousePosRef.current.y || centerY;
 
-      const deltaX = (mouseX - centerX) / width;
-      const deltaY = (mouseY - centerY) / height;
+      if (activeAction === 'playing' && ballRef.current) {
+        targetX = ballRef.current.x;
+        targetY = ballRef.current.y;
+      }
+
+      const deltaX = (targetX - centerX) / width;
+      const deltaY = (targetY - centerY) / height;
 
       const maxPupilOffset = eyeRadius * 0.35;
       const pupilOffset = {
@@ -117,38 +171,46 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       ctx.lineWidth = 8;
       ctx.lineCap = 'round';
 
-      // 2. Draw Eyes
+      // 2. Draw Cheeks (Blushing when pet or happy)
+      if (expression === 'love' || activeAction === 'petting') {
+        ctx.save();
+        ctx.fillStyle = 'rgba(255, 0, 100, 0.4)';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ff0066';
+        ctx.beginPath();
+        ctx.ellipse(leftEyePos.x, leftEyePos.y + eyeRadius + 15, 25, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(rightEyePos.x, rightEyePos.y + eyeRadius + 15, 25, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 3. Draw Eyes
       const drawEye = (pos: Vector2D) => {
         ctx.save();
         ctx.translate(pos.x, pos.y);
 
         if (isBlinking) {
-          // Closed eye line
           ctx.beginPath();
           ctx.moveTo(-eyeRadius, 0);
           ctx.lineTo(eyeRadius, 0);
           ctx.stroke();
         } else if (expression === 'happy' || expression === 'love') {
           if (expression === 'love') {
-            // Heart-shaped eye
             ctx.font = `${eyeRadius * 1.6}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('❤️', 0, 0);
           } else {
-            // Curved arc happy eye `^`
             ctx.beginPath();
             ctx.arc(0, eyeRadius * 0.2, eyeRadius * 0.8, Math.PI * 1.1, Math.PI * 1.9);
             ctx.stroke();
           }
-        } else if (expression === 'excited') {
-          // Star/Sparkle eye `★`
+        } else if (expression === 'excited' || activeAction === 'playing') {
           ctx.font = `${eyeRadius * 1.5}px sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText('★', 0, 0);
         } else if (expression === 'low_battery') {
-          // Low battery warning eye `!` or flickering `X`
           const opacity = Math.sin(frameCount * 0.1) > 0 ? 1 : 0.3;
           ctx.globalAlpha = opacity;
           ctx.font = `bold ${eyeRadius * 1.2}px monospace`;
@@ -157,21 +219,18 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
           ctx.fillText('!', 0, 0);
           ctx.globalAlpha = 1.0;
         } else {
-          // Standard / Neutral / Hungry / Surprised Eye (Outer circle + inner pupil)
           const currentRadius = expression === 'surprised' ? eyeRadius * 1.2 : eyeRadius;
 
           ctx.beginPath();
           ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
           ctx.fill();
 
-          // Inner dark pupil looking around
           ctx.fillStyle = colors.bg;
           ctx.shadowBlur = 0;
           ctx.beginPath();
           ctx.arc(pupilOffset.x, pupilOffset.y, currentRadius * 0.45, 0, Math.PI * 2);
           ctx.fill();
 
-          // Highlighting glare circle
           ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.beginPath();
           ctx.arc(
@@ -190,8 +249,7 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       drawEye(leftEyePos);
       drawEye(rightEyePos);
 
-      // 3. Draw Mouth
-      const mouthY = centerY + eyeRadius + 50;
+      // 4. Draw Mouth with Chewing & Expression Animations
       ctx.save();
       ctx.translate(centerX, mouthY);
 
@@ -200,35 +258,45 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       ctx.strokeStyle = colors.main;
       ctx.fillStyle = colors.main;
 
-      if (expression === 'happy' || expression === 'excited') {
-        // Smiling mouth open
+      if (activeAction === 'feeding') {
+        // Chewing animation: mouth opens and closes rhythmically
+        const chewingCycle = Math.abs(Math.sin(frameCount * 0.25));
+        const mouthOpen = 10 + chewingCycle * 25;
+
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 30, mouthOpen, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Flying food crumbs during chewing
+        ctx.fillStyle = colors.main;
+        for (let i = 0; i < 4; i++) {
+          const crumbX = Math.sin(frameCount * 0.2 + i) * 35;
+          const crumbY = Math.cos(frameCount * 0.3 + i) * 20 + 15;
+          ctx.fillRect(crumbX, crumbY, 4, 4);
+        }
+      } else if (expression === 'happy' || expression === 'excited') {
         ctx.beginPath();
         ctx.arc(0, -10, 35, 0.1 * Math.PI, 0.9 * Math.PI);
         ctx.closePath();
         ctx.fill();
       } else if (expression === 'hungry') {
-        // Open oval mouth waiting for food
         ctx.beginPath();
         ctx.ellipse(0, 0, 25, 35, 0, 0, Math.PI * 2);
         ctx.stroke();
       } else if (expression === 'love') {
-        // Sweet smile
         ctx.beginPath();
         ctx.arc(0, -15, 30, 0.1 * Math.PI, 0.9 * Math.PI);
         ctx.stroke();
       } else if (expression === 'surprised') {
-        // Small round `o` mouth
         ctx.beginPath();
         ctx.arc(0, 0, 18, 0, Math.PI * 2);
         ctx.stroke();
       } else if (expression === 'sleeping' || expression === 'sleepy') {
-        // Quiet flat line mouth
         ctx.beginPath();
         ctx.moveTo(-20, 0);
         ctx.lineTo(20, 0);
         ctx.stroke();
       } else {
-        // Neutral slight gentle curve
         const breathingOffset = Math.sin(frameCount * 0.05) * 3;
         ctx.beginPath();
         ctx.arc(0, -15 + breathingOffset, 30, 0.2 * Math.PI, 0.8 * Math.PI);
@@ -237,13 +305,105 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
 
       ctx.restore();
 
-      // 4. Render Floating Particles (Zzz)
+      // 5. ANIMATED ACTION OVERLAYS
+
+      // A. Feeding Animation: Food items gliding into mouth
+      if (activeAction === 'feeding') {
+        foodProgressRef.current = Math.min(1.0, foodProgressRef.current + 0.02);
+        const progress = foodProgressRef.current;
+
+        const startY = height + 50;
+        const currentY = startY - progress * (startY - mouthY);
+        const foodSize = Math.max(10, 45 * (1 - progress * 0.5));
+
+        ctx.save();
+        ctx.font = `${foodSize}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = colors.glow;
+        ctx.fillText('🍱', centerX, currentY);
+        ctx.restore();
+      }
+
+      // B. Playing Animation: Bouncing 2D ball physics
+      if (activeAction === 'playing' && ballRef.current) {
+        const ball = ballRef.current;
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // Bounce off canvas walls
+        if (ball.x - ball.radius < 0 || ball.x + ball.radius > width) {
+          ball.vx *= -1;
+        }
+        if (ball.y - ball.radius < 0 || ball.y + ball.radius > height - 100) {
+          ball.vy *= -1;
+        }
+
+        ctx.save();
+        ctx.font = `${ball.radius * 2}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = colors.glow;
+        ctx.fillText('⚽', ball.x, ball.y);
+        ctx.restore();
+      }
+
+      // C. Cleaning / Bathing Animation: Soap Bubbles & Water Spray
+      if (activeAction === 'cleaning') {
+        ctx.save();
+        bubblesRef.current.forEach((bubble) => {
+          bubble.y -= bubble.speed;
+          bubble.x += Math.sin(frameCount * 0.05 + bubble.wobble) * 1.5;
+
+          if (bubble.y < -50) {
+            bubble.y = height + 50;
+            bubble.x = Math.random() * width;
+          }
+
+          ctx.strokeStyle = colors.main;
+          ctx.fillStyle = colors.glow;
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = colors.glow;
+
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fill();
+
+          // Bubble highlight shine
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+          ctx.beginPath();
+          ctx.arc(bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.3, bubble.radius * 0.25, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
+      // D. Petting Animation: Hearts floating up
+      if (activeAction === 'petting') {
+        ctx.save();
+        ctx.font = '28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        for (let i = 0; i < 5; i++) {
+          const heartX = centerX + Math.sin(frameCount * 0.05 + i) * (80 + i * 20);
+          const heartY = centerY - (frameCount % 80) * 2 - i * 30;
+          ctx.fillText('💖', heartX, heartY);
+        }
+        ctx.restore();
+      }
+
+      // E. Sleeping Animation: Zzz
       if (expression === 'sleeping') {
         ctx.save();
         ctx.fillStyle = colors.main;
         ctx.shadowBlur = 15;
         ctx.shadowColor = colors.glow;
-        ctx.font = 'bold 28px sans-serif';
+        ctx.font = 'bold 32px sans-serif';
 
         const zX = rightEyePos.x + 40 + Math.sin(frameCount * 0.03) * 15;
         const zY = rightEyePos.y - 40 - (frameCount % 100) * 0.8;
@@ -260,7 +420,7 @@ export const VirtualRobotFace: React.FC<VirtualRobotFaceProps> = ({ expression, 
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [expression, theme]);
+  }, [expression, activeAction, theme]);
 
   return (
     <div 
