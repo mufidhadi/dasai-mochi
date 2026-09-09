@@ -39,6 +39,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Install python dependencies with uv
 RUN uv sync --frozen || uv sync
 
+ENV PYTHONPATH="/app/src"
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Copy entrypoint script
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh

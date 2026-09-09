@@ -4,14 +4,14 @@ from dasai_mochi.stt import SpeechToTextService
 
 def test_stt_initialization():
     """Verify SpeechToTextService initializes WhisperModel lazily with tiny/base model"""
-    with patch("dasai_mochi.stt.WhisperModel") as mock_whisper:
+    with patch("faster_whisper.WhisperModel") as mock_whisper:
         stt = SpeechToTextService(model_size="tiny")
         stt._get_model()
         mock_whisper.assert_called_once_with("tiny", device="cpu", compute_type="int8")
 
 def test_stt_transcribe_audio():
     """Verify transcribe method returns text transcribed from audio input"""
-    with patch("dasai_mochi.stt.WhisperModel") as mock_whisper:
+    with patch("faster_whisper.WhisperModel") as mock_whisper:
         mock_model = MagicMock()
         mock_segment = MagicMock()
         mock_segment.text = " Halo Mochi, opo kabare?"

@@ -1,7 +1,6 @@
 import tempfile
 import os
 from typing import Any
-from faster_whisper import WhisperModel
 
 class SpeechToTextService:
     def __init__(self, model_size: str = "tiny", device: str = "cpu", compute_type: str = "int8"):
@@ -12,6 +11,7 @@ class SpeechToTextService:
 
     def _get_model(self):
         if self.model is None:
+            from faster_whisper import WhisperModel
             self.model = WhisperModel(self.model_size, device=self.device, compute_type=self.compute_type)
         return self.model
 
